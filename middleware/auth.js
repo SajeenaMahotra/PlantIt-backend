@@ -10,6 +10,13 @@ module.exports = (req, res, next) => {
         if (!decoded.id) {
             return res.status(400).json({ error: "Token does not contain valid user ID." });
         }
+
+        // Check if the token contains a valid editor ID and role
+        if (!decoded.id || decoded.role !== "editor") {
+            return res.status(403).json({ error: "Unauthorized: Only editors can create blogs" });
+        }
+        // Attach the editor ID to the request object
+        req.editorId = decoded.id;
         req.userId = decoded.id;
         req.userRole = decoded.role;
         next();

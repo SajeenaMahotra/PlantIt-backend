@@ -20,6 +20,10 @@ const Editor = sequelize.define("editor", {
         type: DataTypes.STRING,
         allowNull: false
     },
+    role: {
+        type: DataTypes.STRING,
+        defaultValue: "editor" // Sets the default value to 'editor'
+    },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

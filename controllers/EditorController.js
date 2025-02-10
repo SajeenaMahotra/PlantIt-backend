@@ -3,7 +3,16 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+const validateEmail = (email) => {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
+};
+
 const addEditor = async (req, res) => {
+    // Validate email format
+    if (!validateEmail(email)) {
+        return res.status(400).json({ message: 'Invalid email format' });
+    }
     try {
         const { editor_name, email, password, adminSecret} = req.body;
 
@@ -37,8 +46,13 @@ const addEditor = async (req, res) => {
 
 // Editor Login
 const loginEditor = async (req, res) => {
+    const { email, password } = req.body;
+    
     try {
-        const { email, password } = req.body;
+        
+        if (!email.startsWith("editor")) {
+            return res.status(403).json({ error: "Unauthorized: Not an editor email" });
+        }
 
         const editor = await Editor.findOne({ where: { email } });
         if (!editor) return res.status(404).json({ message: "Editor not found" });
@@ -46,9 +60,12 @@ const loginEditor = async (req, res) => {
         const isMatch = await bcrypt.compare(password, editor.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-        const token = jwt.sign({ id: editor.editor_id }, process.env.JWT_SECRET, { expiresIn: "2h" });
+        // Dynamically fetch the role from the database
+        const role = "editor"; // Since all editors have the "editor" role, you can just hardcode this
 
-        res.json({ message: "Login successful", token });
+        const token = jwt.sign({ id: editor.editor_id,  role: "editor"}, process.env.JWT_SECRET, { expiresIn: "2h" });
+
+        res.json({ message: "Login successful", token ,role});
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
@@ -104,6 +121,6 @@ const updateEditorProfile = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
-};
+};  
 
 module.exports = { addEditor, loginEditor, fetchEditorProfile, updateEditorProfile };

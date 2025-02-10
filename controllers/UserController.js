@@ -2,10 +2,25 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 
+const validateEmail = (email) => {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
+};
+
 // Register User
 const registerUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
+
+        // Validate email format
+    if (!validateEmail(email)) {
+        return res.status(400).json({ message: 'Invalid email format' });
+    }
+
+        // Validate role
+        if (role !== "user" && role !== "editor") {
+            return res.status(400).json({ message: "Invalid role" });
+        }
 
         // Check if user exists
         const existingUser = await User.findOne({ where: { email } });
@@ -34,11 +49,16 @@ const registerUser = async (req, res) => {
 // Login User
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password ,role} = req.body;
 
         // Check if user exists
         const user = await User.findOne({ where: { email } });
         if (!user) return res.status(400).json({ message: "Invalid credentials" });
+
+        // Verify role
+        if (user.role !== role) {
+            return res.status(400).json({ message: "Role mismatch. Please select the correct role." });
+        }
 
         // Verify password
         const isMatch = await bcrypt.compare(password, user.password);
@@ -47,7 +67,7 @@ const loginUser = async (req, res) => {
         // Generate JWT token
         const token = jwt.sign({ id: user.id, role: user.role }, "your_secret_key", { expiresIn: "1h" });
 
-        res.status(200).json({ message: "Login successful", token });
+        res.status(200).json({ message: "Login successful", token ,role});
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
