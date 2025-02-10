@@ -1,7 +1,7 @@
 // models/Blog.js
 const { DataTypes } = require("sequelize");
-const sequelize = require("../database/db"); // Your Sequelize connection file
-const Editor = require("./Editor"); // Import the Editor model
+const sequelize = require("../database/db"); 
+const Editor = require("./Editor"); 
 
 const Blog = sequelize.define("Blog", {
     id: {
@@ -13,7 +13,7 @@ const Blog = sequelize.define("Blog", {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Editor, // Reference to the Editors table
+            model: Editor, 
             key: "editor_id",
         },
         onDelete: "CASCADE",
@@ -28,11 +28,11 @@ const Blog = sequelize.define("Blog", {
         allowNull: false,
     },
     description: {
-        type: DataTypes.STRING,  // New description field
-        allowNull: true,         // Set to true if optional, set to false if required
+        type: DataTypes.STRING,  
+        allowNull: true,         
     },
     image_path: {
-        type: DataTypes.STRING, // Path to the uploaded image
+        type: DataTypes.STRING, 
         allowNull: true,
     },
     status: {
@@ -44,7 +44,7 @@ const Blog = sequelize.define("Blog", {
         allowNull: true,
     },
 }, {
-    timestamps: true, // We are manually managing timestamps
+    timestamps: true, 
     tableName: "Blogs",
 });
 

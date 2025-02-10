@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../database/db"); // Import database connection
+const sequelize = require("../database/db"); 
 
 const Editor = sequelize.define("editor", {
     editor_id: {
@@ -22,7 +22,7 @@ const Editor = sequelize.define("editor", {
     },
     role: {
         type: DataTypes.STRING,
-        defaultValue: "editor" // Sets the default value to 'editor'
+        defaultValue: "editor" 
     },
     created_at: {
         type: DataTypes.DATE,

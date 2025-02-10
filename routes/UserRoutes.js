@@ -3,7 +3,6 @@ const { registerUser, loginUser, getUser, updateUser, deleteUser } = require("..
 
 const router = express.Router();
 
-// Define routes
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/:id", getUser);

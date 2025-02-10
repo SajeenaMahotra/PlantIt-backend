@@ -9,29 +9,29 @@ const validateEmail = (email) => {
 };
 
 const addEditor = async (req, res) => {
-    // Validate email format
+  
     if (!validateEmail(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
     }
     try {
         const { editor_name, email, password, adminSecret} = req.body;
 
-        // Check if the request includes the correct admin secret
+        
         if (adminSecret !== process.env.ADMIN_SECRET) {
             return res.status(403).json({ message: "Unauthorized: Invalid admin secret" });
         }
 
-        // Check if the email already exists
+        
         const existingEditor = await Editor.findOne({ where: { email } });
         if (existingEditor) {
             return res.status(400).json({ message: "Editor with this email already exists" });
         }
 
-        // Hash the password before storing it
+        
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Create a new editor
+        
         const newEditor = await Editor.create({
             editor_name,
             email,
@@ -60,8 +60,8 @@ const loginEditor = async (req, res) => {
         const isMatch = await bcrypt.compare(password, editor.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-        // Dynamically fetch the role from the database
-        const role = "editor"; // Since all editors have the "editor" role, you can just hardcode this
+        
+        const role = "editor"; 
 
         const token = jwt.sign({ id: editor.editor_id,  role: "editor"}, process.env.JWT_SECRET, { expiresIn: "2h" });
 
@@ -74,7 +74,7 @@ const loginEditor = async (req, res) => {
 // Fetch Editor Profile (Protected)
 const fetchEditorProfile = async (req, res) => {
     try {
-        const { id } = req.params; // Extract the ID from the URL
+        const { id } = req.params; 
         const loggedInEditorId = req.userId; 
 
         if (parseInt(id) !== loggedInEditorId) {

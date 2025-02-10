@@ -12,13 +12,13 @@ const createBlog = async (req, res) => {
             return res.status(400).json({ error: "Title and content are required." });
         }
 
-        // Check if a blog with the same title already exists
+        
         const existingBlog = await Blog.findOne({ where: { title } });
         if (existingBlog) {
             return res.status(400).json({ error: "A blog with this title already exists." });
         }
 
-        // Check if editorId exists, if not send error (should never happen with proper authentication)
+        
         if (!req.editorId) {
             return res.status(400).json({ error: "Editor ID is missing." });
         }
@@ -66,7 +66,7 @@ const getBlogById = async (req, res) => {
             return res.status(404).json({ error: "Blog not found." });
         }
 
-        // Add full image URL
+        
         const blogWithImage = {
             ...blog.toJSON(),
             imageUrl: blog.image_path ? `${req.protocol}://${req.get("host")}${blog.image_path}` : null
@@ -88,7 +88,7 @@ const updateBlog = async (req, res) => {
         blog.title = title || blog.title;
         blog.content = content || blog.content;
         
-        // Update the image path only if a new image was uploaded
+        
         if (req.file) {
             blog.image_path = `/uploads/${req.file.filename}`;
         }
@@ -115,11 +115,11 @@ const deleteBlog = async (req, res) => {
             return res.status(404).json({ error: "Blog not found." });
         }
 
-        // Delete image from storage if it exists
+        
         if (blog.image_path) {
-            const imagePath = path.join(__dirname, "..", blog.image_path); // Path to the image in the 'uploads' folder
+            const imagePath = path.join(__dirname, "..", blog.image_path);
             if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath); // Remove the image file
+                fs.unlinkSync(imagePath); 
             }
         }
 

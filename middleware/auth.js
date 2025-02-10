@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
         if (!decoded.id || decoded.role !== "editor") {
             return res.status(403).json({ error: "Unauthorized: Only editors can create blogs" });
         }
-        // Attach the editor ID to the request object
+        
         req.editorId = decoded.id;
         req.userId = decoded.id;
         req.userRole = decoded.role;

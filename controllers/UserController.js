@@ -12,24 +12,23 @@ const registerUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
 
-        // Validate email format
+       
     if (!validateEmail(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
     }
 
-        // Validate role
         if (role !== "user" && role !== "editor") {
             return res.status(400).json({ message: "Invalid role" });
         }
 
-        // Check if user exists
+        
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) return res.status(400).json({ message: "User already exists" });
 
-        // Hash password
+        
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create user
+        
         const newUser = await User.create({
             name,
             email,
@@ -51,16 +50,16 @@ const loginUser = async (req, res) => {
     try {
         const { email, password ,role} = req.body;
 
-        // Check if user exists
+        
         const user = await User.findOne({ where: { email } });
         if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-        // Verify role
+        
         if (user.role !== role) {
             return res.status(400).json({ message: "Role mismatch. Please select the correct role." });
         }
 
-        // Verify password
+        
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
@@ -118,5 +117,5 @@ const deleteUser = async (req, res) => {
     }
 };
 
-// Export all controllers
+
 module.exports = { registerUser, loginUser, getUser, updateUser, deleteUser };
