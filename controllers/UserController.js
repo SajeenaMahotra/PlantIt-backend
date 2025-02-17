@@ -66,7 +66,7 @@ const loginUser = async (req, res) => {
         // Generate JWT token
         const token = jwt.sign({ id: user.id, role: user.role }, "your_secret_key", { expiresIn: "1h" });
 
-        res.status(200).json({ message: "Login successful", token ,role});
+        res.status(200).json({ message: "Login successful", token ,role,userId: user.id,});
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
@@ -90,18 +90,49 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, role } = req.body;
+        const { name, email } = req.body;
 
         const user = await User.findByPk(id);
         if (!user) return res.status(404).json({ message: "User not found" });
 
-        await user.update({ name, email, role });
+        await user.update({ name, email });
 
         res.status(200).json({ message: "User updated successfully" });
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
+
+// Change User Password
+const changePassword = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { currentPassword, newPassword, confirmPassword } = req.body;
+  
+      // Check if new password and confirm password match
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "New password and confirm password do not match" });
+      }
+  
+      const user = await User.findByPk(id);
+      if (!user) return res.status(404).json({ message: "User not found" });
+  
+      // Compare the current password with the stored password
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) return res.status(400).json({ message: "Current password is incorrect" });
+  
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+      // Update the user's password
+      await user.update({ password: hashedPassword });
+  
+      res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+};
+  
 
 // Delete User
 const deleteUser = async (req, res) => {
@@ -118,4 +149,4 @@ const deleteUser = async (req, res) => {
 };
 
 
-module.exports = { registerUser, loginUser, getUser, updateUser, deleteUser };
+module.exports = { registerUser, loginUser, getUser, updateUser, changePassword,deleteUser };

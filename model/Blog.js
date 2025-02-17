@@ -29,11 +29,19 @@ const Blog = sequelize.define("Blog", {
     },
     description: {
         type: DataTypes.STRING,  
-        allowNull: true,         
+        allowNull: false,         
     },
     image_path: {
         type: DataTypes.STRING, 
         allowNull: true,
+    },
+    category: {
+        type:DataTypes.STRING,
+        allowNull:false,
+    },
+    tags:{
+        type:DataTypes.ARRAY(DataTypes.STRING),
+        allowNull:false
     },
     status: {
         type: DataTypes.ENUM("draft", "published"),

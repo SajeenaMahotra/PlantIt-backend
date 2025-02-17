@@ -18,7 +18,7 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE"],
 }));
 
-app.use(express.json()); // for parsing application/json
+app.use(express.json()); 
 
 app.use("/uploads", express.static("uploads"));
 

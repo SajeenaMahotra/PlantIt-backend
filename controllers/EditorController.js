@@ -65,7 +65,7 @@ const loginEditor = async (req, res) => {
 
         const token = jwt.sign({ id: editor.editor_id,  role: "editor"}, process.env.JWT_SECRET, { expiresIn: "2h" });
 
-        res.json({ message: "Login successful", token ,role});
+        res.json({ message: "Login successful", token ,role, editorId: editor.editor_id});
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
@@ -75,7 +75,7 @@ const loginEditor = async (req, res) => {
 const fetchEditorProfile = async (req, res) => {
     try {
         const { id } = req.params; 
-        const loggedInEditorId = req.userId; 
+        const loggedInEditorId = req.editorId; 
 
         if (parseInt(id) !== loggedInEditorId) {
             return res.status(403).json({ message: "Access denied" });
@@ -93,34 +93,38 @@ const fetchEditorProfile = async (req, res) => {
     }
 };
 
-// Update Editor Profile (Protected)
 const updateEditorProfile = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { editor_name, email, password } = req.body;
-        const loggedInEditorId = req.userId;
-
-        if (parseInt(id) !== loggedInEditorId) {
-            return res.status(403).json({ message: "Access denied .You can only update your own profile." });
-        }
-
-        const editor = await Editor.findByPk(id);
-        if (!editor) return res.status(404).json({ message: "Editor not found" });
-
-        editor.editor_name = editor_name || editor.editor_name;
-        editor.email = email || editor.email;
-
-        if (password) {
-            const salt = await bcrypt.genSalt(10);
-            editor.password = await bcrypt.hash(password, salt);
-        }
-
-        await editor.save();
-
-        res.json({ message: "Profile updated successfully" });
+      console.log("Request params:", req.params); // Log the URL parameters
+      console.log("Request body:", req.body); // Log the request body
+      console.log("Logged-in editor ID:", req.userId); // Log the logged-in editor ID
+  
+      const { id } = req.params;
+      const { editor_name, email, password } = req.body;
+      const loggedInEditorId = req.userId;
+  
+      if (parseInt(id) !== loggedInEditorId) {
+        return res.status(403).json({ message: "Access denied. You can only update your own profile." });
+      }
+  
+      const editor = await Editor.findByPk(id);
+      if (!editor) return res.status(404).json({ message: "Editor not found" });
+  
+      editor.editor_name = editor_name || editor.editor_name;
+      editor.email = email || editor.email;
+  
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        editor.password = await bcrypt.hash(password, salt);
+      }
+  
+      await editor.save();
+  
+      res.json({ message: "Profile updated successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Internal Server Error", error: error.message });
+      console.error("Error in updateEditorProfile:", error); // Log the error
+      res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
-};  
+  };
 
 module.exports = { addEditor, loginEditor, fetchEditorProfile, updateEditorProfile };
