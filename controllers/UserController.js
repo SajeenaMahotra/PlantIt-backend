@@ -103,35 +103,32 @@ const updateUser = async (req, res) => {
     }
 };
 
-// Change User Password
 const changePassword = async (req, res) => {
+    const { id } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
     try {
-      const { id } = req.params;
-      const { currentPassword, newPassword, confirmPassword } = req.body;
-  
-      // Check if new password and confirm password match
-      if (newPassword !== confirmPassword) {
-        return res.status(400).json({ message: "New password and confirm password do not match" });
-      }
-  
-      const user = await User.findByPk(id);
-      if (!user) return res.status(404).json({ message: "User not found" });
-  
-      // Compare the current password with the stored password
-      const isMatch = await bcrypt.compare(currentPassword, user.password);
-      if (!isMatch) return res.status(400).json({ message: "Current password is incorrect" });
-  
-      // Hash the new password
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-  
-      // Update the user's password
-      await user.update({ password: hashedPassword });
-  
-      res.status(200).json({ message: "Password updated successfully" });
+        const user = await User.findByPk(id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        console.log("Stored Hashed Password:", user.password);
+        console.log("Entered Current Password:", currentPassword);
+
+        const isMatch = await bcrypt.compare(currentPassword.trim(), user.password);
+        console.log("Password Match Result:", isMatch);
+
+        if (!isMatch) return res.status(400).json({ message: "Current password is incorrect" });
+
+        const hashedPassword = await bcrypt.hash(newPassword.trim(), 10);
+        await user.update({ password: hashedPassword });
+
+        return res.status(200).json({ message: "Password updated successfully" });
+
     } catch (error) {
-      res.status(500).json({ message: "Internal Server Error", error: error.message });
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 };
+
   
 
 // Delete User

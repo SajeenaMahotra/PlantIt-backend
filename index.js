@@ -5,6 +5,9 @@ const sequelize = require("./database/db");
 const userRoutes = require("./routes/UserRoutes");
 const editorRoutes = require("./routes/EditorRoutes"); 
 const blogRoutes = require("./routes/BlogRoutes"); 
+const savedBlogRoutes = require("./routes/SavedBlogRoutes");
+const albumRoutes = require("./routes/AlbumRoutes");
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,6 +29,9 @@ app.use("/uploads", express.static("uploads"));
 app.use("/users", userRoutes);
 app.use("/editors", editorRoutes);
 app.use("/blogs", blogRoutes); 
+app.use("/savedblogs", savedBlogRoutes);
+app.use("/albums", albumRoutes);
+
 
 
 sequelize.sync()

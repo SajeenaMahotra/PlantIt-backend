@@ -10,6 +10,7 @@ router.get("/", BlogController.getAllBlogs);
 router.get("/published", BlogController.getPublishedBlogs); 
 router.get("/:id", BlogController.getBlogById);
 router.get("/published/:editorId",BlogController. getPublishedBlogsByEditorId);
+router.get('/drafts/:editorId',BlogController. getDraftsByEditorId); 
 router.put("/:id", auth, upload.single("image"), BlogController.updateBlog);
 router.delete("/:id", auth, BlogController.deleteBlog);
 

@@ -92,6 +92,29 @@ const getPublishedBlogsByEditorId = async (req, res) => {
     }
 };
 
+// Get drafts by editorId
+const getDraftsByEditorId = async (req, res) => {
+    try {
+        const { editorId } = req.params;  // Get editorId from URL parameters
+        const drafts = await Blog.findAll({
+            where: {
+                editor_id: editorId,
+                status: "draft",  // Only fetch drafts
+            },
+            attributes: ['id', 'title', 'content', 'image_path', 'category', 'tags', 'status', 'published_at'],
+        });
+
+        if (!drafts.length) {
+            return res.status(404).json({ message: "No drafts found." });
+        }
+
+        res.status(200).json(drafts);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching drafts" });
+    }
+};
+
+
 
 const getAllBlogs = async (req, res) => {
     try {
@@ -197,4 +220,4 @@ const deleteBlog = async (req, res) => {
     }
 };
 
-module.exports = { createBlog, getAllBlogs, getPublishedBlogs,getPublishedBlogsByEditorId, getBlogById, updateBlog, deleteBlog };
+module.exports = { createBlog, getAllBlogs, getPublishedBlogs,getPublishedBlogsByEditorId,getDraftsByEditorId, getBlogById, updateBlog, deleteBlog };

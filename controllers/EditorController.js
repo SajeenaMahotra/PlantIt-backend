@@ -113,10 +113,7 @@ const updateEditorProfile = async (req, res) => {
       editor.editor_name = editor_name || editor.editor_name;
       editor.email = email || editor.email;
   
-      if (password) {
-        const salt = await bcrypt.genSalt(10);
-        editor.password = await bcrypt.hash(password, salt);
-      }
+      
   
       await editor.save();
   
@@ -127,4 +124,38 @@ const updateEditorProfile = async (req, res) => {
     }
   };
 
-module.exports = { addEditor, loginEditor, fetchEditorProfile, updateEditorProfile };
+  const changeEditorPassword = async (req, res) => {
+    try {
+      console.log("Change password request:", req.params, req.body);
+      
+      const { id } = req.params;
+      const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({ message: "All fields are required." });
+      }
+  
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "New password and confirmation do not match." });
+      }
+  
+      const editor = await Editor.findByPk(id);
+      if (!editor) return res.status(404).json({ message: "Editor not found" });
+  
+      const passwordMatch = await bcrypt.compare(currentPassword, editor.password);
+      if (!passwordMatch) return res.status(400).json({ message: "Current password is incorrect." });
+  
+      const salt = await bcrypt.genSalt(10);
+      editor.password = await bcrypt.hash(newPassword, salt);
+      await editor.save();
+  
+      res.json({ message: "Password changed successfully." });
+    } catch (error) {
+      console.error("Error changing password:", error);
+      res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+  };
+  
+
+module.exports = { addEditor, loginEditor, fetchEditorProfile, updateEditorProfile,changeEditorPassword };

@@ -7,7 +7,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/:id", getUser);
 router.put("/:id", updateUser);
-router.put("/change-password/:id", changePassword);
+router.put("/changepassword/:id", changePassword);
 router.delete("/:id", deleteUser);
 
 module.exports = router;
