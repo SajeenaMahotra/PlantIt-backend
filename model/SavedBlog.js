@@ -9,6 +9,15 @@ const SavedBlog = sequelize.define("SavedBlog", {
         autoIncrement: true,
         primaryKey: true,
     },
+
+    // user_id: {
+    //     type: DataTypes.INTEGER,
+    //     allowNull: false,
+    // },
+    // blog_id: {
+    //     type: DataTypes.INTEGER,
+    //     allowNull: false,
+    // },
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -36,7 +45,5 @@ const SavedBlog = sequelize.define("SavedBlog", {
     tableName: "SavedBlogs",
 });
 
-User.belongsToMany(Blog, { through: SavedBlog, foreignKey: "user_id" });
-Blog.belongsToMany(User, { through: SavedBlog, foreignKey: "blog_id" });
 
 module.exports = SavedBlog;

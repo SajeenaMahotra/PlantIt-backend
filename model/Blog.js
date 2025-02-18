@@ -1,7 +1,7 @@
-// models/Blog.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database/db"); 
 const Editor = require("./Editor"); 
+
 
 const Blog = sequelize.define("Blog", {
     id: {
@@ -56,6 +56,6 @@ const Blog = sequelize.define("Blog", {
     tableName: "Blogs",
 });
 
-Blog.belongsTo(Editor, { foreignKey: "editor_id", onDelete: "CASCADE" });
+// Blog.belongsTo(Editor, { foreignKey: "editor_id", onDelete: "CASCADE" });
 
 module.exports = Blog;

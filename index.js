@@ -6,7 +6,7 @@ const userRoutes = require("./routes/UserRoutes");
 const editorRoutes = require("./routes/EditorRoutes"); 
 const blogRoutes = require("./routes/BlogRoutes"); 
 const savedBlogRoutes = require("./routes/SavedBlogRoutes");
-const albumRoutes = require("./routes/AlbumRoutes");
+const { User, Blog, Editor, SavedBlog } = require("./model/associate");
 
 
 const app = express();
@@ -30,8 +30,12 @@ app.use("/users", userRoutes);
 app.use("/editors", editorRoutes);
 app.use("/blogs", blogRoutes); 
 app.use("/savedblogs", savedBlogRoutes);
-app.use("/albums", albumRoutes);
 
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: "Something went wrong!" });
+});
 
 
 sequelize.sync()
