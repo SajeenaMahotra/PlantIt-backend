@@ -212,6 +212,7 @@ const searchBlogs = async (req, res) => {
         
         const blogs = await Blog.findAll({
             where: {
+                status: "published",
                 [Op.or]: [
                     { title: { [Op.iLike]: `%${query}%` } },
                     { content: { [Op.iLike]: `%${query}%` } },

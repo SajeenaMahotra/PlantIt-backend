@@ -6,7 +6,9 @@ const userRoutes = require("./routes/UserRoutes");
 const editorRoutes = require("./routes/EditorRoutes"); 
 const blogRoutes = require("./routes/BlogRoutes"); 
 const savedBlogRoutes = require("./routes/SavedBlogRoutes");
-const { User, Blog, Editor, SavedBlog } = require("./model/associate");
+const viewedBlogRoutes = require("./routes/ViewedBlogRoutes");
+const blogRecommendationsRoutes= require("./routes/BlogRecommendationsRoutes")
+const { User, Blog, Editor, SavedBlog,ViewedBlog } = require("./model/associate");
 
 
 const app = express();
@@ -30,6 +32,9 @@ app.use("/users", userRoutes);
 app.use("/editors", editorRoutes);
 app.use("/blogs", blogRoutes); 
 app.use("/savedblogs", savedBlogRoutes);
+app.use("/viewedblogs", viewedBlogRoutes);
+app.use("/blogrecommendations",blogRecommendationsRoutes)
+
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
