@@ -12,6 +12,7 @@ router.get("/:id", BlogController.getBlogById);
 router.get("/published/:editorId",BlogController. getPublishedBlogsByEditorId);
 router.get('/drafts/:editorId',BlogController. getDraftsByEditorId); 
 router.put("/:id", auth, upload.single("image"), BlogController.updateBlog);
+router.get("/search/blogs", BlogController.searchBlogs);
 router.delete("/:id", auth, BlogController.deleteBlog);
 
 module.exports = router;

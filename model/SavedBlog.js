@@ -10,31 +10,13 @@ const SavedBlog = sequelize.define("SavedBlog", {
         primaryKey: true,
     },
 
-    // user_id: {
-    //     type: DataTypes.INTEGER,
-    //     allowNull: false,
-    // },
-    // blog_id: {
-    //     type: DataTypes.INTEGER,
-    //     allowNull: false,
-    // },
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-            model: User,
-            key: "id",
-        },
-        onDelete: "CASCADE",
     },
     blog_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-            model: Blog,
-            key: "id",
-        },
-        onDelete: "CASCADE",
     },
     saved_at: {
         type: DataTypes.DATE,

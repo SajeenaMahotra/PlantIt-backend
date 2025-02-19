@@ -1,15 +1,24 @@
 const Blog = require("../model/Blog");
 const fs = require("fs");
 const path = require("path");
+const { Op } = require("sequelize");
+const { Sequelize } = require('sequelize');
 
 // Create a blog
 const createBlog = async (req, res) => {
     try {
         const { title, content, status,category ,description} = req.body;
         const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
-        const tags = JSON.parse(req.body.tags); // Parse the tags from string to array
-
-
+        // Parse the tags from the request body
+        let tags = [];
+        if (req.body.tags) {
+            try {
+                tags = JSON.parse(req.body.tags); 
+            } catch (error) {
+                return res.status(400).json({ error: "Invalid tags format. Tags must be a JSON array." });
+            }
+        }
+        
         if (!title || !content) {
             return res.status(400).json({ error: "Title and content are required." });
         }
@@ -178,17 +187,52 @@ const updateBlog = async (req, res) => {
             blog.image_path = `/uploads/${req.file.filename}`;
         }
 
-        blog.status = status || blog.status;
-        blog.updatedAt = new Date();
-        if (status === "published" && !blog.published_at) blog.published_at = new Date();
-
-        console.log("Updated blog data:", blog);
-        
+        if (status === "published" && blog.status === "draft") {
+            blog.status = "published";
+            blog.published_at = new Date(); // Set published date
+          } else if (status) {
+            blog.status = status;
+          }
+      
+          blog.updated_at = new Date();
 
         await blog.save();
         res.json({ message: "Blog updated successfully.", blog });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+};
+
+const searchBlogs = async (req, res) => {
+    try {
+        const { query } = req.query;
+        if (!query) {
+            return res.status(400).json({ error: "Search query is required." });
+        }
+        
+        const blogs = await Blog.findAll({
+            where: {
+                [Op.or]: [
+                    { title: { [Op.iLike]: `%${query}%` } },
+                    { content: { [Op.iLike]: `%${query}%` } },
+                    { category: { [Op.iLike]: `%${query}%` } },
+                    { tags: { [Op.contains]: Sequelize.literal(`ARRAY['${query}']::text[]`)} },
+                ],
+            },
+        });
+        if (!blogs.length) {
+            return res.status(404).json({ message: "No matching blogs found." });
+        } 
+
+        const blogsWithImages = blogs.map(blog => ({
+            ...blog.toJSON(),
+            imageUrl: blog.image_path ? `${req.protocol}://${req.get("host")}${blog.image_path}` : null
+        }));
+        
+        res.status(200).json(blogsWithImages);
+    } catch (error) {
+        console.error("Error during search:", error);
+        res.status(500).json({ error:  error.message});
     }
 };
 
@@ -220,4 +264,4 @@ const deleteBlog = async (req, res) => {
     }
 };
 
-module.exports = { createBlog, getAllBlogs, getPublishedBlogs,getPublishedBlogsByEditorId,getDraftsByEditorId, getBlogById, updateBlog, deleteBlog };
+module.exports = { createBlog, getAllBlogs, getPublishedBlogs,getPublishedBlogsByEditorId,getDraftsByEditorId, getBlogById, updateBlog, searchBlogs, deleteBlog };
