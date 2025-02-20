@@ -8,6 +8,7 @@ const blogRoutes = require("./routes/BlogRoutes");
 const savedBlogRoutes = require("./routes/SavedBlogRoutes");
 const viewedBlogRoutes = require("./routes/ViewedBlogRoutes");
 const blogRecommendationsRoutes= require("./routes/BlogRecommendationsRoutes")
+const plantOfTheMonthRoutes = require("./routes/PlantOfTheMonthRoutes")
 const { User, Blog, Editor, SavedBlog,ViewedBlog } = require("./model/associate");
 
 
@@ -34,6 +35,7 @@ app.use("/blogs", blogRoutes);
 app.use("/savedblogs", savedBlogRoutes);
 app.use("/viewedblogs", viewedBlogRoutes);
 app.use("/blogrecommendations",blogRecommendationsRoutes)
+app.use('/potm', plantOfTheMonthRoutes);
 
 
 // Error Handling Middleware
