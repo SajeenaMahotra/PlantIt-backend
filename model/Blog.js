@@ -56,6 +56,4 @@ const Blog = sequelize.define("Blog", {
     tableName: "Blogs",
 });
 
-// Blog.belongsTo(Editor, { foreignKey: "editor_id", onDelete: "CASCADE" });
-
 module.exports = Blog;

@@ -26,3 +26,4 @@ module.exports = {
     SavedBlog,
     ViewedBlog
 };
+

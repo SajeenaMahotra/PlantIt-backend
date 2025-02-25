@@ -6,7 +6,7 @@ const createPlantOfTheMonth = async (req, res) => {
     try {
       const { title, summary, procedure, month ,publishCode } = req.body;
 
-      // Input validation
+  
       if (!title || !summary || !procedure || !month ) {
         return res.status(400).json({ error: "All fields are required" });
       }

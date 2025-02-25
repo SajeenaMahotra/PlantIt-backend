@@ -4,7 +4,7 @@ const logBlogView = async (req, res) => {
         const { user_id, blog_id } = req.body;
 
         try {
-            // Check if the blog has already been viewed by the user
+            
             const existingView = await ViewedBlog.findOne({
                 where: { user_id, blog_id },
             });
@@ -13,7 +13,7 @@ const logBlogView = async (req, res) => {
                 return res.status(200).json({ message: "Blog already viewed by the user." });
             }
 
-            // Log the viewed blog
+            
             await ViewedBlog.create({ user_id, blog_id });
             res.status(201).json({ message: "Blog view logged successfully." });
         } catch (error) {
@@ -29,7 +29,7 @@ const getViewedBlogsByUser = async (req, res) => {
     try {
         const viewedBlogs = await ViewedBlog.findAll({
             where: { user_id },
-            include: [{ model: Blog, as: "blog" }], // Include the associated blog details
+            include: [{ model: Blog, as: "blog" }], 
         });
 
         res.status(200).json(viewedBlogs);

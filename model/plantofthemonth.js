@@ -15,11 +15,11 @@ const PlantOfTheMonth = sequelize.define('PlantOfTheMonth', {
       allowNull: false,
     },
     image_url: {
-      type: DataTypes.STRING, // This will store the path to the uploaded image
+      type: DataTypes.STRING, 
       allowNull: false,
     },
     month: {
-      type: DataTypes.STRING, // This can be the month of the plant feature
+      type: DataTypes.STRING, 
       allowNull: false,
     },
   }, {
